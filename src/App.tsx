@@ -219,7 +219,9 @@ export default function App() {
 
 	return (
 		<div>
-			<style></style>
+			<style>{`canvas {
+				width: 90vw;
+			}`}</style>
 			<header>
 				<div>
 					<label>
@@ -260,6 +262,7 @@ export default function App() {
 							src={imageSrc}
 							alt="Source context"
 							onLoad={handleImageLoad}
+							hidden
 						/>
 					)}
 
