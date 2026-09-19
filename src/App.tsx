@@ -25,11 +25,9 @@ export default function App() {
 	const [progressStatus, setProgressStatus] = useState<string>('')
 
 	const [copied, setCopied] = useState<boolean>(false)
-	const [cameraActive, setCameraActive] = useState<boolean>(false)
 	const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
 	const canvasRef = useRef<HTMLCanvasElement | null>(null)
-	const videoRef = useRef<HTMLVideoElement | null>(null)
 	const fileInputRef = useRef<HTMLInputElement | null>(null)
 	const imageRef = useRef<HTMLImageElement | null>(null)
 
@@ -99,52 +97,9 @@ export default function App() {
 
 		const url = URL.createObjectURL(file)
 		setImageSrc(url)
-		setCameraActive(false)
 		setErrorMessage(null)
 		setSelection(null)
 		setOcrText('')
-	}
-
-	const startCamera = async () => {
-		setErrorMessage(null)
-		try {
-			setCameraActive(true)
-			setImageSrc(null)
-			const stream = await navigator.mediaDevices.getUserMedia({
-				video: {facingMode: 'environment', width: {ideal: 1920}, height: {ideal: 1080}},
-			})
-			if (videoRef.current) videoRef.current.srcObject = stream
-		} catch (err) {
-			console.error('Camera error:', err)
-			setErrorMessage('Unable to access camera. Please check device permissions.')
-			setCameraActive(false)
-		}
-	}
-
-	const stopCamera = () => {
-		if (videoRef.current && videoRef.current.srcObject) {
-			const stream = videoRef.current.srcObject as MediaStream
-			stream.getTracks().forEach(track => track.stop())
-			videoRef.current.srcObject = null
-		}
-		setCameraActive(false)
-	}
-
-	const capturePhoto = () => {
-		if (!videoRef.current) return
-		const video = videoRef.current
-		const tempCanvas = document.createElement('canvas')
-
-		tempCanvas.width = video.videoWidth || 1280
-		tempCanvas.height = video.videoHeight || 720
-
-		const ctx = tempCanvas.getContext('2d')
-		if (!ctx) return
-
-		ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height)
-		const dataUrl = tempCanvas.toDataURL('image/png')
-		setImageSrc(dataUrl)
-		stopCamera()
 	}
 
 	const getCanvasCoordinates = (e: React.PointerEvent<HTMLCanvasElement>) => {
@@ -265,9 +220,8 @@ export default function App() {
 
 	return (
 		<div>
-			{/* App Header */}
+			<style></style>
 			<header>
-				{/* Action Controls */}
 				<div>
 					<input
 						type="file"
@@ -276,17 +230,18 @@ export default function App() {
 						accept="image/*"
 					/>
 
-					<button onClick={() => fileInputRef.current?.click()}>
-						<span>Upload Image</span>
-					</button>
+					<label>
+						<input
+							type="file"
+							accept="image/*"
+							capture="environment"
+							hidden
+							onChange={handleFileUpload}
+						/>
+						Take Photo
+					</label>
 
-					{!cameraActive ? (
-						<button onClick={startCamera}>Use Camera</button>
-					) : (
-						<button onClick={stopCamera}>
-							<span>Close Camera</span>
-						</button>
-					)}
+					<button onClick={() => fileInputRef.current?.click()}>Upload Image</button>
 				</div>
 			</header>
 
@@ -304,21 +259,6 @@ export default function App() {
 						</div>
 					)}
 
-					{/* Active Camera Live Preview */}
-					{cameraActive && (
-						<div>
-							<video
-								ref={videoRef}
-								autoPlay
-								playsInline
-								onLoadedMetadata={e => e.currentTarget.play()}
-							/>
-							<button onClick={capturePhoto}>
-								<span>Take Snapshot</span>
-							</button>
-						</div>
-					)}
-
 					{/* Hidden HTMLImageElement for original dimensions reference */}
 					{imageSrc && (
 						<img
@@ -330,7 +270,7 @@ export default function App() {
 					)}
 
 					{/* Active Drawing Canvas Workspace */}
-					{!cameraActive && imageSrc && (
+					{imageSrc && (
 						<div>
 							<div>
 								<canvas
@@ -362,7 +302,7 @@ export default function App() {
 					)}
 
 					{/* Empty Upload Prompt */}
-					{!cameraActive && !imageSrc && (
+					{!imageSrc && (
 						<div>
 							<div>{/* img icon */}</div>
 							<h3>No Image Loaded</h3>
