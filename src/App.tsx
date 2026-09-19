@@ -28,7 +28,6 @@ export default function App() {
 	const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
 	const canvasRef = useRef<HTMLCanvasElement | null>(null)
-	const fileInputRef = useRef<HTMLInputElement | null>(null)
 	const imageRef = useRef<HTMLImageElement | null>(null)
 
 	const drawCanvas = useCallback(() => {
@@ -223,13 +222,10 @@ export default function App() {
 			<style></style>
 			<header>
 				<div>
-					<input
-						type="file"
-						ref={fileInputRef}
-						onChange={handleFileUpload}
-						accept="image/*"
-					/>
-
+					<label>
+						<input type="file" accept="image/*" onChange={handleFileUpload} hidden />
+						Upload Image
+					</label>
 					<label>
 						<input
 							type="file"
@@ -240,8 +236,6 @@ export default function App() {
 						/>
 						Take Photo
 					</label>
-
-					<button onClick={() => fileInputRef.current?.click()}>Upload Image</button>
 				</div>
 			</header>
 
@@ -298,15 +292,6 @@ export default function App() {
 									</button>
 								)}
 							</div>
-						</div>
-					)}
-
-					{/* Empty Upload Prompt */}
-					{!imageSrc && (
-						<div>
-							<div>{/* img icon */}</div>
-							<h3>No Image Loaded</h3>
-							<p>Upload an image or start your camera to capture text for OCR.</p>
 						</div>
 					)}
 				</section>
