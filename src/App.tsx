@@ -298,6 +298,7 @@ export default function App() {
 							/>
 							Take Photo
 						</label>
+						{imageSrc && <button onClick={() => setImageSrc(null)}>Clear Photo</button>}
 					</div>
 				</header>
 				{/* Right Column: OCR Execution Controls & Result Window */}
