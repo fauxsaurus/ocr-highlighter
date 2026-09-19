@@ -22,7 +22,7 @@ export default function App() {
 	const [ocrText, setOcrText] = useState<string>('')
 	const [isProcessing, setIsProcessing] = useState<boolean>(false)
 	const [progress, setProgress] = useState<number>(0)
-	const [progressStatus, setProgressStatus] = useState<string>('')
+	const [progressStatus, setProgressStatus] = useState<string>('') // Preparing image..., Loading tesseract core, Initializing tesseract, Loading language traineddata, Initializing api, Recognizing Text
 
 	const [copied, setCopied] = useState<boolean>(false)
 	const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -279,68 +279,63 @@ export default function App() {
 				</section>
 				<header>
 					<div>
-						<label>
-							<input
-								type="file"
-								accept="image/*"
-								onChange={handleFileUpload}
-								hidden
-							/>
-							Upload Image
-						</label>
-						<label>
-							<input
-								type="file"
-								accept="image/*"
-								capture="environment"
-								hidden
-								onChange={handleFileUpload}
-							/>
-							Take Photo
-						</label>
-						{imageSrc && <button onClick={() => setImageSrc(null)}>Clear Photo</button>}
+						{imageSrc ? (
+							<button onClick={() => setImageSrc(null)}>Clear Photo</button>
+						) : (
+							<>
+								<label>
+									<input
+										type="file"
+										accept="image/*"
+										onChange={handleFileUpload}
+										hidden
+									/>
+									Upload Image
+								</label>
+								<label>
+									<input
+										type="file"
+										accept="image/*"
+										capture="environment"
+										hidden
+										onChange={handleFileUpload}
+									/>
+									Take Photo
+								</label>
+							</>
+						)}
 					</div>
 				</header>
-				{/* Right Column: OCR Execution Controls & Result Window */}
 				<section>
 					<div>
-						<div>
-							<h2>OCR Processing</h2>
-							{selection ? <span>Region Active</span> : <span>Full Frame</span>}
-						</div>
+						{imageSrc && (
+							<div>
+								<button onClick={runOCR} disabled={!imageSrc || isProcessing}>
+									{isProcessing ? (
+										<span>Extracting...</span>
+									) : (
+										<span>
+											{' '}
+											Extract {selection ? 'Highlighted' : 'All'} Text
+										</span>
+									)}
+								</button>
 
-						<div>
-							<button onClick={runOCR} disabled={!imageSrc || isProcessing}>
-								{isProcessing ? (
-									<span>Extracting...</span>
-								) : (
-									<span>
-										{selection
-											? 'Recognize Highlighted Region'
-											: 'Recognize Full Image'}
-									</span>
-								)}
-							</button>
-
-							{/* Tesseract Progress Indicator */}
-							{isProcessing && (
-								<div>
+								{/* Progress */}
+								{isProcessing && (
 									<div>
 										<span>{progressStatus}</span>
 										<span>{progress}%</span>
 									</div>
-									<div>
-										<div style={{width: `${progress}%`}} />
-									</div>
-								</div>
-							)}
-						</div>
+								)}
+							</div>
+						)}
 
 						{/* Extracted Output Textbox */}
 						<div>
-							<div>
-								<span>Extracted Text</span>
-								{ocrText && (
+							{ocrText && (
+								<>
+									<output>{ocrText}</output>
 									<button onClick={copyToClipboard}>
 										{copied ? (
 											<>
@@ -352,14 +347,8 @@ export default function App() {
 											</>
 										)}
 									</button>
-								)}
-							</div>
-
-							<textarea
-								value={ocrText}
-								readOnly
-								placeholder="Extracted text will appear here after recognition..."
-							/>
+								</>
+							)}
 						</div>
 					</div>
 				</section>
