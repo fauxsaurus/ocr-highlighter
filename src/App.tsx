@@ -222,30 +222,9 @@ export default function App() {
 			<style>{`canvas {
 				width: 90vw;
 			}`}</style>
-			<header>
-				<div>
-					<label>
-						<input type="file" accept="image/*" onChange={handleFileUpload} hidden />
-						Upload Image
-					</label>
-					<label>
-						<input
-							type="file"
-							accept="image/*"
-							capture="environment"
-							hidden
-							onChange={handleFileUpload}
-						/>
-						Take Photo
-					</label>
-				</div>
-			</header>
 
-			{/* Main Container */}
 			<main>
-				{/* Left Column: Image Canvas / Camera Viewport */}
 				<section>
-					{/* Error Banner */}
 					{errorMessage && (
 						<div>
 							<span>
@@ -298,7 +277,29 @@ export default function App() {
 						</div>
 					)}
 				</section>
-
+				<header>
+					<div>
+						<label>
+							<input
+								type="file"
+								accept="image/*"
+								onChange={handleFileUpload}
+								hidden
+							/>
+							Upload Image
+						</label>
+						<label>
+							<input
+								type="file"
+								accept="image/*"
+								capture="environment"
+								hidden
+								onChange={handleFileUpload}
+							/>
+							Take Photo
+						</label>
+					</div>
+				</header>
 				{/* Right Column: OCR Execution Controls & Result Window */}
 				<section>
 					<div>
