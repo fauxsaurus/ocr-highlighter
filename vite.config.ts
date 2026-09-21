@@ -6,7 +6,5 @@ import basicSsl from '@vitejs/plugin-basic-ssl'
 export default defineConfig({
 	base: 'ocr-highlighter',
 	plugins: [react(), basicSsl()],
-	server: {
-		https: true,
-	},
+	server: {},
 })
