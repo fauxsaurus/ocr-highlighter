@@ -1,0 +1,32 @@
+section {
+	display: flex;
+	height: 100vh;
+	flex-direction: column;
+	width: 100%;
+}
+
+canvas {
+	max-height: 100%;
+	max-width: 100%;
+	object-fit: contain;
+}
+
+[hidden],
+[hidden] * {
+	display: none;
+	height: 0;
+	width: 0;
+}
+
+.max {
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	flex-grow: 1;
+	width: 100vw;
+}
+
+header,
+footer {
+	min-height: 2rem;
+}
