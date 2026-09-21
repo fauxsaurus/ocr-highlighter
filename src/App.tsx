@@ -211,9 +211,9 @@ export default function App() {
 		}
 	}
 
-	const copyToClipboard = () => {
-		if (!ocrText) return
-		navigator.clipboard.writeText(ocrText)
+	const copyToClipboard = (text: string) => {
+		if (!text) return
+		navigator.clipboard.writeText(text)
 		setCopied(true)
 		setTimeout(() => setCopied(false), 2000)
 	}
@@ -292,7 +292,16 @@ export default function App() {
 				<output className="max">{ocrText}</output>
 				<footer>
 					<button onClick={() => setOcrText('')}>Cancel</button>
-					<button onClick={copyToClipboard}>{copied ? 'Copied' : 'Copy'}</button>
+					<button onClick={() => copyToClipboard(ocrText)}>
+						{copied ? 'Copied' : 'Copy'}
+					</button>
+					<button
+						onClick={() =>
+							copyToClipboard(ocrText.replace(/[\r\n]+/g, ' ').replace(/\s{2,}/, ' '))
+						}
+					>
+						{copied ? 'Copied' : 'Copy (without linebreaks)'}
+					</button>
 				</footer>
 			</section>
 		</main>
