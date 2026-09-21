@@ -1,5 +1,6 @@
 import React, {useState, useRef, useEffect, useCallback} from 'react'
 import Tesseract from 'tesseract.js'
+import './app.css'
 
 interface Region {
 	x: number
@@ -218,141 +219,82 @@ export default function App() {
 	}
 
 	return (
-		<div>
-			<style>{`canvas {
-				width: 90vw;
-			}`}</style>
-
-			<main>
-				<section>
-					{errorMessage && (
-						<div>
-							<span>
-								<span>{errorMessage}</span>
-							</span>
-							<button onClick={() => setErrorMessage(null)}></button>
-						</div>
-					)}
-
-					{/* Hidden HTMLImageElement for original dimensions reference */}
-					{imageSrc && (
-						<img
-							ref={imageRef}
-							src={imageSrc}
-							alt="Source context"
-							onLoad={handleImageLoad}
-							hidden
-						/>
-					)}
-
-					{/* Active Drawing Canvas Workspace */}
-					{imageSrc && (
-						<div>
-							<div>
-								<canvas
-									ref={canvasRef}
-									onPointerDown={handlePointerDown}
-									onPointerMove={handlePointerMove}
-									onPointerUp={handlePointerUp}
-									style={{touchAction: 'none'}}
-								/>
-							</div>
-
-							{/* Bottom Instructions Bar */}
-							<div>
-								<span>
-									Click and drag (or touch and drag) to draw a region box.
-								</span>
-								{selection && (
-									<button
-										onClick={() => {
-											setSelection(null)
-											setOcrText('')
-										}}
-									>
-										Clear Region
-									</button>
-								)}
-							</div>
-						</div>
-					)}
-				</section>
+		<main>
+			<div hidden={!errorMessage}>
+				<span>{errorMessage}</span>
+				<button onClick={() => setErrorMessage(null)}></button>
+			</div>
+			{isProcessing && (
 				<header>
-					<div>
-						{imageSrc ? (
-							<button onClick={() => setImageSrc(null)}>Clear Photo</button>
-						) : (
-							<>
-								<label>
-									<input
-										type="file"
-										accept="image/*"
-										onChange={handleFileUpload}
-										hidden
-									/>
-									Upload Image
-								</label>
-								<label>
-									<input
-										type="file"
-										accept="image/*"
-										capture="environment"
-										hidden
-										onChange={handleFileUpload}
-									/>
-									Take Photo
-								</label>
-							</>
-						)}
-					</div>
+					<span>{progressStatus}</span>
+					<span>{progress}%</span>
 				</header>
-				<section>
-					<div>
-						{imageSrc && (
-							<div>
-								<button onClick={runOCR} disabled={!imageSrc || isProcessing}>
-									{isProcessing ? (
-										<span>Extracting...</span>
-									) : (
-										<span>
-											{' '}
-											Extract {selection ? 'Highlighted' : 'All'} Text
-										</span>
-									)}
-								</button>
+			)}
+			<section hidden={!!imageSrc}>
+				<label className="max">
+					<input type="file" accept="image/*" onChange={handleFileUpload} hidden />
+					Upload Image
+				</label>
+				<footer>
+					<label>
+						<input
+							type="file"
+							accept="image/*"
+							capture="environment"
+							hidden
+							onChange={handleFileUpload}
+						/>
+						Take Photo
+					</label>
+				</footer>
+			</section>
+			<section hidden={!imageSrc || !!ocrText}>
+				{/* @todo make this the background and absolutely position the canvas over it for a highlighter overlay. */}
+				<img
+					ref={imageRef}
+					src={imageSrc ?? undefined}
+					alt="Source context"
+					onLoad={handleImageLoad}
+					hidden
+				/>
+				<div className="max">
+					<canvas
+						ref={canvasRef}
+						onPointerDown={handlePointerDown}
+						onPointerMove={handlePointerMove}
+						onPointerUp={handlePointerUp}
+						style={{touchAction: 'none'}}
+					/>
+				</div>
 
-								{/* Progress */}
-								{isProcessing && (
-									<div>
-										<span>{progressStatus}</span>
-										<span>{progress}%</span>
-									</div>
-								)}
-							</div>
+				<footer>
+					<button onClick={() => setImageSrc(null)}>Clear Photo</button>
+					<button
+						disabled={!selection}
+						onClick={() => {
+							setSelection(null)
+							setOcrText('')
+						}}
+					>
+						Clear Region
+					</button>
+
+					<button onClick={runOCR} disabled={!imageSrc || isProcessing}>
+						{isProcessing ? (
+							<span>Extracting...</span>
+						) : (
+							<span> Extract {selection ? 'Highlighted' : 'All'} Text</span>
 						)}
-
-						{/* Extracted Output Textbox */}
-						<div>
-							{ocrText && (
-								<>
-									<output>{ocrText}</output>
-									<button onClick={copyToClipboard}>
-										{copied ? (
-											<>
-												<span>Copied</span>
-											</>
-										) : (
-											<>
-												<span>Copy</span>
-											</>
-										)}
-									</button>
-								</>
-							)}
-						</div>
-					</div>
-				</section>
-			</main>
-		</div>
+					</button>
+				</footer>
+			</section>
+			<section hidden={!ocrText}>
+				<output className="max">{ocrText}</output>
+				<footer>
+					<button onClick={() => setOcrText('')}>Cancel</button>
+					<button onClick={copyToClipboard}>{copied ? 'Copied' : 'Copy'}</button>
+				</footer>
+			</section>
+		</main>
 	)
 }
