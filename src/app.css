@@ -1,3 +1,62 @@
+* {
+	box-sizing: border-box;
+}
+
+html,
+body,
+#root,
+main {
+	--color-bg: #f8f8f8;
+	--color-theme: #fc0;
+	--color-white: #fff;
+
+	--color-button-fx: transparent;
+
+	--header-height: 2.5rem;
+
+	font-family: Arial, Helvetica, sans-serif;
+	height: 100%;
+	margin: 0;
+	width: 100%;
+}
+
+main[data-settings-menu='true'] {
+	--width-settings-menu: 30rem;
+}
+main[data-settings-menu='false'] {
+	--width-settings-menu: 0rem;
+}
+
+main[data-settings-menu='false'] aside {
+	display: none;
+	opacity: 0;
+}
+
+header,
+footer {
+	background: var(--color-theme);
+	box-shadow: 0 0.1rem 0.1rem #999;
+	color: var(--color-white);
+	grid-area: 1 / 1 / 2 / 3;
+	height: var(--header-height);
+	padding: 0 0.25rem;
+	width: 100%;
+	z-index: 1;
+
+	h1 {
+		font-size: 1.75rem;
+		margin-block-start: 0;
+		margin-block-end: 0;
+		user-select: none;
+	}
+
+	h1:hover {
+		cursor: pointer;
+	}
+}
+
+
+
 section {
 	display: flex;
 	height: 100vh;
@@ -23,10 +82,5 @@ canvas {
 	display: flex;
 	justify-content: center;
 	flex-grow: 1;
-	width: 100vw;
-}
-
-header,
-footer {
-	min-height: 2rem;
+	width: 100%;
 }
